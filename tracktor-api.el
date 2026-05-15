@@ -192,8 +192,54 @@
    :callback callback)
   )
 
-(tracktor-tv-show-get-season-ratings "breaking bad" 1
-                                      :callback (lambda (res)
-                                                  (message "%s" res)))
+(cl-defun tracktor-tv-show-get-episode (show-name season-number episode-number &key callback)
+  "Get a single episode for a show"
+  (tracktor--trakt-get
+   (format "/shows/%s/seasons/%d/episodes/%d"
+           (replace-regexp-in-string " " "-" show-name)
+           season-number
+           episode-number)
+   :callback callback)
+  )
+
+(cl-defun tracktor-tv-show-get-episode-comments
+    (show-name season-number episode-number &key sort callback)
+  "Get a single episode comments for a show"
+  (cl-check-type sort (member likes likes_30 replies replies_30 plays rating added))
+  (tracktor--trakt-get
+   (format "/shows/%s/seasons/%d/episodes/%d/comments/%s"
+           (replace-regexp-in-string " " "-" show-name)
+           season-number
+           episode-number
+           sort)
+   :auth? t
+   :callback callback)
+  )
+
+(cl-defun tracktor-tv-show-get-episode-people
+    (show-name season-number episode-number &key callback)
+  "Get a single episode people for a show"
+  (tracktor--trakt-get
+   (format "/shows/%s/seasons/%d/episodes/%d/people"
+           (replace-regexp-in-string " " "-" show-name)
+           season-number
+           episode-number)
+   :callback callback)
+  )
+
+(cl-defun tracktor-tv-show-get-episode-ratings
+    (show-name season-number episode-number &key callback)
+  "Get a single episode ratings for a show"
+  (tracktor--trakt-get
+   (format "/shows/%s/seasons/%d/episodes/%d/ratings"
+           (replace-regexp-in-string " " "-" show-name)
+           season-number
+           episode-number)
+   :callback callback)
+  )
+
+(tracktor-tv-show-get-episode-ratings "breaking bad" 1 1
+                                     :callback (lambda (res)
+                                                 (message "%s" res)))
 (provide 'tracktor-api)
 ;;; tracktor-api.el ends here
