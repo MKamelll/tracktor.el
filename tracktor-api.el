@@ -269,13 +269,29 @@
   )
 
 (cl-defun tracktor-tv-user-deny-request (id &key callback)
-  "Approve a follower using the id of the request"
+  "Deny a follower using the id of the request"
   (tracktor--trakt-request
    (format "/users/requests/%d" id)
    :method "DELETE"
    :auth? t
    :callback callback)
   )
+
+(cl-defun tracktor-tv-user-get-hidden-items (section &key type callback)
+  "Get hidden shows for the user"
+  (cl-check-type section (member calendar progress_watched progress_watched_reset progress_collected recommendations comments dropped))
+  (cl-check-type type (member show season user))
+  (tracktor--trakt-request
+   (format "/users/hidden/%s" section)
+   :params `(("type" . ,type))
+   :auth? t
+   :callback callback)
+  )
+
+(tracktor-tv-user-get-hidden-items 'progress_watched
+                                   :type 'season
+                                   :callback (lambda (res)
+                                               (message "%s" res)))
 
 (provide 'tracktor-api)
 ;;; tracktor-api.el ends here
