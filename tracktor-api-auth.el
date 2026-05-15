@@ -117,7 +117,7 @@
                                             :callback
                                             (lambda (token) token)))))
 
-(cl-defun tracktor--trakt-get (endpoint &key auth? params callback)
+(cl-defun tracktor--trakt-request (endpoint &key auth? method params callback)
   "General handler for requests"
   (let* ((base-url "https://api.trakt.tv")
          (full-url (format "%s%s" base-url endpoint))
@@ -131,9 +131,14 @@
                             (cons `("Authorization" . ,(format "Bearer %s" token)) headers)
                           (error "Tracktor: no valid token available")))
                     headers)))
+    (unless
+        (or (null method)
+            (member method '("GET" "POST" "DELETE" "UPDATE")))
+      (error
+       (format "Tracktor: invalid method: %s" method)))
 
     (request full-url
-      :type "GET"
+      :type (or method "GET")
       :headers headers
       :params params
       :parser 'json-read
@@ -142,7 +147,9 @@
                   (funcall callback data)))
       :error (cl-function
               (lambda (&key response &allow-other-keys)
-                (message "Tracktor: request failed: %s" (request-response-data response)))))))
+                (message "Tracktor: request failed: (%d) %s"
+                         (request-response-status-code response)
+                         (request-response-data response)))))))
 
 (provide 'tracktor-api-auth)
 ;;; tracktor-api-auth.el ends here
