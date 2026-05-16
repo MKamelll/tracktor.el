@@ -352,7 +352,31 @@
    :callback callback))
 
 
-(tracktor-tv-user-get-lists
+(cl-defun tracktor-tv-user-create-list
+    (name &key description
+          (privacy 'private)
+          (display-numbers? nil)
+          (allow-comments? t)
+          (sort-by 'rank)
+          (sort-how 'asc)
+          callback)
+  "Create a new personal list"
+  (cl-check-type privacy (member private link friends public))
+  (cl-check-type sort-by (member rank added title released runtime popularity random percentage imdb_rating tmdb_rating rt_tomatometer rt_audience metascore votes imdb_votes tmdb_votes my_rating watched collected))
+  (cl-check-type sort-how (member asc desc))
+  (tracktor--trakt-request "/users/me/lists"
+                           :method "POST"
+                           :auth? t
+                           :data `((name . ,name)
+                                   (description . ,description)
+                                   (privacy . ,privacy)
+                                   (display_numbers . ,display-numbers?)
+                                   (allow_comments . ,allow-comments?)
+                                   (sort_by . ,sort-by)
+                                   (sort_how . ,sort-how))
+                           :callback callback))
+
+(tracktor-tv-user-create-list "fuck my life"
  :callback (lambda (res)
              (message "%s" res)))
 
