@@ -117,7 +117,7 @@
                                             :callback
                                             (lambda (token) token)))))
 
-(cl-defun tracktor--trakt-request (endpoint &key auth? method params callback)
+(cl-defun tracktor--trakt-request (endpoint &key auth? method params data callback)
   "General handler for requests"
   (let* ((base-url "https://api.trakt.tv")
          (full-url (format "%s%s" base-url endpoint))
@@ -142,6 +142,7 @@
       :headers headers
       :params params
       :parser 'json-read
+      :data (json-encode data)
       :success (cl-function
                 (lambda (&key data &allow-other-keys)
                   (funcall callback data)))
