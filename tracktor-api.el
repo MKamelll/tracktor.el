@@ -288,10 +288,73 @@
    :callback callback)
   )
 
-(tracktor-tv-user-get-hidden-items 'progress_watched
-                                   :type 'season
-                                   :callback (lambda (res)
-                                               (message "%s" res)))
+(cl-defun tracktor-tv-user-add-hidden-items (section &key shows seasons callback)
+  "Add a hidden item into a section"
+  (cl-check-type section (member calendar progress_watched progress_watched_reset progress_collected recommendations comments dropped))
+
+  (tracktor--trakt-request
+   (format "/users/hidden/%s" section)
+   :auth? t
+   :method "POST"
+   :data `((shows . ,(or shows []))
+           (seasons . ,(or seasons [])))
+   :callback callback))
+
+
+(cl-defun tracktor-tv-user-remove-hidden-items (section &key shows seasons callback)
+  "Remove a hidden item from a section"
+  (cl-check-type section (member calendar progress_watched progress_watched_reset progress_collected recommendations comments dropped))
+  (tracktor--trakt-request
+   (format "/users/hidden/%s/remove" section)
+   :auth? t
+   :method "POST"
+   :data `((shows . ,(or shows []))
+           (seasons . ,(or seasons [])))
+   :callback callback))
+
+
+(cl-defun tracktor-tv-user-get-profile (&key callback)
+  "Get the user general profile info"
+  (tracktor--trakt-request "/users/me"
+                           :auth? t
+                           :callback callback))
+
+(cl-defun tracktor-tv-user-get-likes (type &key callback)
+  "Get the user likes"
+  (cl-check-type type (member comments lists))
+  (tracktor--trakt-request
+   (format "/users/me/likes/%s" type)
+   :auth? t
+   :callback callback))
+
+(cl-defun tracktor-tv-user-get-collection (&key callback)
+  "Get all collected items in a user's collection"
+  (tracktor--trakt-request "/users/me/collection/shows"
+                           :auth? t
+                           :callback callback))
+
+
+(cl-defun tracktor-tv-user-get-comments (type comment-type &key include-replies? callback)
+  "Returns the most recently written comments for the user"
+  (cl-check-type comment-type (member all reviews shouts))
+  (cl-check-type type (member all shows seasons episodes lists))
+  (tracktor--trakt-request
+   (format "/users/me/comments/%s/%s" comment-type type)
+   :auth? t
+   :params `(("include_replies" . include-replies?))
+   :callback callback))
+
+
+(cl-defun tracktor-tv-user-get-lists (&key callback)
+  "Returns all personal lists for a user"
+  (tracktor--trakt-request "/users/me/lists"
+   :auth? t
+   :callback callback))
+
+
+(tracktor-tv-user-get-lists
+ :callback (lambda (res)
+             (message "%s" res)))
 
 (provide 'tracktor-api)
 ;;; tracktor-api.el ends here
