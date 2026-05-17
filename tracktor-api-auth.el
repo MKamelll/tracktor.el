@@ -133,7 +133,7 @@
                     headers)))
     (unless
         (or (null method)
-            (member method '("GET" "POST" "DELETE" "UPDATE")))
+            (member method '("GET" "POST" "DELETE" "PUT" "PATCH")))
       (error
        (format "Tracktor: invalid method: %s" method)))
 
