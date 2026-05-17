@@ -583,16 +583,68 @@ you can specify a start-at and end-at period of this format '2016-07-01T23:59:59
              (end_at . ,end-at))
    :callback callback))
 
+(cl-defun tracktor--tv-user-ratings-get (type &key rating callback)
+  "Get a user's ratings filtered by type. You can optionally filter for a specific rating between 1 and 10. Send a comma separated string for rating if you need multiple ratings."
+  (cl-check-type type (member shows seasons episodes))
+  (tracktor--trakt-request
+   (format "/users/me/ratings/%s/%s" type rating)
+   :auth? t
+   :callback callback))
 
-(tracktor--tv-show-details-get
- "breaking bad"
- :callback (lambda (res)
-             (let ((id (alist-get 'trakt (alist-get 'ids res))))
-               (tracktor--tv-user-watched-history id
-                                                  :callback
-                                                  (lambda (res)
-                                                    (message "%s" res))))))
 
+(cl-defun tracktor--tv-user-watchlist-get (type &key (sort-by 'rank) (sort-how 'asc) callback)
+  "Returns all items in a user's watchlist filtered by type."
+  (cl-check-type type (member shows seasons episodes))
+  (cl-check-type sort-by (member rank added title released runtime popularity random percentage imdb_rating tmdb_rating rt_tomatometer rt_audience metascore votes imdb_votes tmdb_votes my_rating watched collected))
+  (cl-check-type sort-how (member asc desc))
+  (tracktor--trakt-request
+   (format "/users/me/watchlist/%s/%s/%s" type sort-by sort-how)
+   :auth? t
+   :callback callback))
+
+
+(cl-defun tracktor--tv-user-watchlist-comments-get (sort &key callback)
+  "Returns all top level comments for the watchlist. By default, the comments are sorted by most likes"
+  (cl-check-type sort (member likes likes_30 replies replies_30 plays rating added))
+  (tracktor--trakt-request
+   (format "/users/me/watchlist/comments/%s" sort)
+   :auth? t
+   :callback callback))
+
+
+(cl-defun tracktor--tv-user-favorites-get (type &key (sort-by 'rank) (sort-how 'asc) callback)
+  "Returns the top 100 shows and movies a user has favorited."
+  (cl-check-type type (member shows seasons episodes))
+  (cl-check-type sort-by (member rank added title released runtime popularity random percentage imdb_rating tmdb_rating rt_tomatometer rt_audience metascore votes imdb_votes tmdb_votes my_rating watched collected))
+  (cl-check-type sort-how (member asc desc))
+  (tracktor--trakt-request
+   (format "/users/me/favorites/%s/%s/%s" type sort-by sort-how)
+   :auth? t
+   :callback callback))
+
+(cl-defun tracktor--tv-user-favorites-comments-get (sort &key callback)
+  "Returns all top level comments for the favorites. By default, the comments are sorted by most likes"
+  (cl-check-type sort (member likes likes_30 replies replies_30 plays rating added))
+  (tracktor--trakt-request
+   (format "/users/me/favorites/comments/%s" sort)
+   :auth? t
+   :callback callback))
+
+
+(cl-defun tracktor--tv-user-watching-get (&key callback)
+  "Returns a movie or episode if the user is currently watching something. If they are not, it returns no data and a 204 HTTP status code."
+  (tracktor--trakt-request "/users/me/watching"
+                           :auth? t
+                           :callback callback))
+
+
+(cl-defun tracktor--tv-user-watched-get (&key extended callback)
+  "Returns all movies or shows a user has watched sorted by most recently watched.
+If you add :extended \\='noseasons to the URL, it won't return season or episode info."
+  (tracktor--trakt-request "/users/me/watched/shows"
+                           :auth? t
+                           :params `((extended . ,extended))
+                           :callback callback))
 
 (provide 'tracktor-api)
 ;;; tracktor-api.el ends here
