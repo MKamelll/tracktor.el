@@ -12,55 +12,55 @@
                        :params `(("query" . ,show-name))
                        :callback callback))
 
-(cl-defun tracktor-tv-show-get-trending (&key callback)
+(cl-defun tracktor-tv-show-trending-get (&key callback)
   "Get the most trending shows"
   (tracktor--trakt-request "/shows/trending"
                        :callback callback))
 
-(cl-defun tracktor-tv-show-get-popular (&key callback)
+(cl-defun tracktor-tv-show-popular-get (&key callback)
   "Get the most popular shows"
   (tracktor--trakt-request "/shows/popular"
                        :callback callback))
 
-(cl-defun tracktor-tv-show-get-most-favourited (&key period callback)
+(cl-defun tracktor-tv-show-most-favourited-get (&key period callback)
   "Get the most favourited shows by period"
   (cl-check-type period (member weekly monthly daily all))
   (tracktor--trakt-request (format "/shows/favorited/%s" period)
                        :callback callback))
 
 
-(cl-defun tracktor-tv-show-get-most-played (&key period callback)
+(cl-defun tracktor-tv-show-most-played-get (&key period callback)
   "Get the most played shows by period"
   (cl-check-type period (member weekly monthly daily all))
   (tracktor--trakt-request (format "/shows/played/%s" period)
                        :callback callback))
 
-(cl-defun tracktor-tv-show-get-most-watched (&key period callback)
+(cl-defun tracktor-tv-show-most-watched-get (&key period callback)
   "Get the most watched shows by period"
   (cl-check-type period (member weekly monthly daily all))
   (tracktor--trakt-request (format "/shows/watched/%s" period)
                        :callback callback))
 
-(cl-defun tracktor-tv-show-get-most-collected (&key period callback)
+(cl-defun tracktor-tv-show-most-collected-get (&key period callback)
   "Get the most collected shows by period"
   (cl-check-type period (member weekly monthly daily all))
   (tracktor--trakt-request (format "/shows/collected/%s" period)
                        :callback callback))
 
-(cl-defun tracktor-tv-show-get-most-anticipated (&key callback)
+(cl-defun tracktor-tv-show-most-anticipated-get (&key callback)
   "Get the most anticipated shows by period"
   (tracktor--trakt-request "/shows/anticipated"
                        :callback callback))
 
 
-(cl-defun tracktor-tv-show-get-details (show-name &key extended callback)
+(cl-defun tracktor-tv-show-details-get (show-name &key extended callback)
   "Get a show details, if extended it returns the full details"
   (tracktor--trakt-request (format "/shows/%s" (replace-regexp-in-string " " "-" show-name))
                        :params (when (eq extended 'full)
                                  '(("extended" . "full")))
                        :callback callback))
 
-(cl-defun tracktor-tv-show-get-comments (show-name &key sort callback)
+(cl-defun tracktor-tv-show-comments-get (show-name &key sort callback)
   "Get all the comments for a show with a sort"
   (cl-check-type sort (member likes likes_30 replies replies_30 watched plays rating added))
   (tracktor--trakt-request
@@ -70,7 +70,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-lists-containing (show-name &key type sort)
+(cl-defun tracktor-tv-show-lists-containing-get (show-name &key type sort)
   "Get all the lists containing a show"
   (cl-check-type sort (member popular likes comments items added updated))
   (cl-check-type type (member all personal official watchlists favorites))
@@ -82,7 +82,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-collection-progress
+(cl-defun tracktor-tv-show-progress-collection-get
     (show-name &key hidden? specials? count-specials? callback)
   "Get the collected progress of a show for the user, for physical media or bought online"
   (tracktor--trakt-request
@@ -101,7 +101,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-watched-progress
+(cl-defun tracktor-tv-show-progress-watched-get
     (show-name &key hidden? specials? count-specials? callback)
   "Get the progress watched of a show for the user"
   (tracktor--trakt-request
@@ -121,7 +121,7 @@
   )
 
 
-(cl-defun tracktor-tv-show-get-people (show-name &key callback)
+(cl-defun tracktor-tv-show-people-get (show-name &key callback)
   "Get the cast and crew for a show"
   (tracktor--trakt-request
    (format "/shows/%s/people"
@@ -129,7 +129,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-rating (show-name &key callback)
+(cl-defun tracktor-tv-show-rating-get (show-name &key callback)
   "Get ratings for a show"
   (tracktor--trakt-request
    (format "/shows/%s/ratings"
@@ -137,7 +137,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-related (show-name &key callback)
+(cl-defun tracktor-tv-show-related-get (show-name &key callback)
   "Get related shows for a show"
   (tracktor--trakt-request
    (format "/shows/%s/related"
@@ -146,7 +146,7 @@
   )
 
 
-(cl-defun tracktor-tv-show-get-seasons (show-name &key callback)
+(cl-defun tracktor-tv-show-seasons-get (show-name &key callback)
   "Get seasons for a show"
   (tracktor--trakt-request
    (format "/shows/%s/seasons"
@@ -154,7 +154,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-season (show-name season-number &key callback)
+(cl-defun tracktor-tv-show-season-get (show-name season-number &key callback)
   "Get a single season for a show"
   (tracktor--trakt-request
    (format "/shows/%s/seasons/%d/info"
@@ -163,7 +163,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-season-episodes (show-name season-number &key callback)
+(cl-defun tracktor-tv-show-season-episodes-get (show-name season-number &key callback)
   "Get a single season episodes for a show"
   (tracktor--trakt-request
    (format "/shows/%s/seasons/%d"
@@ -172,7 +172,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-season-comments (show-name season-number &key sort callback)
+(cl-defun tracktor-tv-show-season-comments-get (show-name season-number &key sort callback)
   "Get a single season comments for a show"
   (cl-check-type sort (member likes likes_30 replies replies_30 watched plays rating added))
   (tracktor--trakt-request
@@ -183,7 +183,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-season-ratings (show-name season-number &key callback)
+(cl-defun tracktor-tv-show-season-ratings-get (show-name season-number &key callback)
   "Get a single season ratings for a show"
   (tracktor--trakt-request
    (format "/shows/%s/seasons/%d/ratings"
@@ -192,7 +192,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-episode (show-name season-number episode-number &key callback)
+(cl-defun tracktor-tv-show-episode-get (show-name season-number episode-number &key callback)
   "Get a single episode for a show"
   (tracktor--trakt-request
    (format "/shows/%s/seasons/%d/episodes/%d"
@@ -202,7 +202,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-episode-comments
+(cl-defun tracktor-tv-show-episode-comments-get
     (show-name season-number episode-number &key sort callback)
   "Get a single episode comments for a show"
   (cl-check-type sort (member likes likes_30 replies replies_30 plays rating added))
@@ -216,7 +216,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-episode-people
+(cl-defun tracktor-tv-show-episode-people-get
     (show-name season-number episode-number &key callback)
   "Get a single episode people for a show"
   (tracktor--trakt-request
@@ -227,7 +227,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-show-get-episode-ratings
+(cl-defun tracktor-tv-show-episode-ratings-get
     (show-name season-number episode-number &key callback)
   "Get a single episode ratings for a show"
   (tracktor--trakt-request
@@ -238,28 +238,28 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-user-get-settings (&key callback)
+(cl-defun tracktor-tv-user-settings-get (&key callback)
   "Get the user settings"
   (tracktor--trakt-request "/users/settings"
                        :auth? t
                        :callback callback)
   )
 
-(cl-defun tracktor-tv-user-get-pending-following (&key callback)
+(cl-defun tracktor-tv-user-pending-following-get (&key callback)
   "Get the user's pending following requests that they're waiting for the other user's to approve"
   (tracktor--trakt-request "/users/requests/following"
                        :auth? t
                        :callback callback)
   )
 
-(cl-defun tracktor-tv-user-get-follow-requests (&key callback)
+(cl-defun tracktor-tv-user-follow-requests-get (&key callback)
   "Get the user's pending follow requests so they can either approve or deny them"
   (tracktor--trakt-request "/users/requests"
                        :auth? t
                        :callback callback)
   )
 
-(cl-defun tracktor-tv-user-approve-request (id &key callback)
+(cl-defun tracktor-tv-user-request-approve (id &key callback)
   "Approve a follower using the id of the request"
   (tracktor--trakt-request
    (format "/users/requests/%d" id)
@@ -268,7 +268,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-user-deny-request (id &key callback)
+(cl-defun tracktor-tv-user-request-deny (id &key callback)
   "Deny a follower using the id of the request"
   (tracktor--trakt-request
    (format "/users/requests/%d" id)
@@ -277,7 +277,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-user-get-hidden-items (section &key type callback)
+(cl-defun tracktor-tv-user-hidden-items-get (section &key type callback)
   "Get hidden shows for the user"
   (cl-check-type section (member calendar progress_watched progress_watched_reset progress_collected recommendations comments dropped))
   (cl-check-type type (member show season user))
@@ -288,7 +288,7 @@
    :callback callback)
   )
 
-(cl-defun tracktor-tv-user-add-hidden-items (section &key shows seasons callback)
+(cl-defun tracktor-tv-user-hidden-items-add (section &key shows seasons callback)
   "Add a hidden item into a section"
   (cl-check-type section (member calendar progress_watched progress_watched_reset progress_collected recommendations comments dropped))
 
@@ -301,7 +301,7 @@
    :callback callback))
 
 
-(cl-defun tracktor-tv-user-remove-hidden-items (section &key shows seasons callback)
+(cl-defun tracktor-tv-user-hidden-items-remove (section &key shows seasons callback)
   "Remove a hidden item from a section"
   (cl-check-type section (member calendar progress_watched progress_watched_reset progress_collected recommendations comments dropped))
   (tracktor--trakt-request
@@ -313,13 +313,13 @@
    :callback callback))
 
 
-(cl-defun tracktor-tv-user-get-profile (&key callback)
+(cl-defun tracktor-tv-user-profile-get (&key callback)
   "Get the user general profile info"
   (tracktor--trakt-request "/users/me"
                            :auth? t
                            :callback callback))
 
-(cl-defun tracktor-tv-user-get-likes (type &key callback)
+(cl-defun tracktor-tv-user-likes-get (type &key callback)
   "Get the user likes"
   (cl-check-type type (member comments lists))
   (tracktor--trakt-request
@@ -327,14 +327,14 @@
    :auth? t
    :callback callback))
 
-(cl-defun tracktor-tv-user-get-collection (&key callback)
+(cl-defun tracktor-tv-user-collection-get (&key callback)
   "Get all collected items in a user's collection"
   (tracktor--trakt-request "/users/me/collection/shows"
                            :auth? t
                            :callback callback))
 
 
-(cl-defun tracktor-tv-user-get-comments (type comment-type &key include-replies? callback)
+(cl-defun tracktor-tv-user-comments-get (type comment-type &key include-replies? callback)
   "Returns the most recently written comments for the user"
   (cl-check-type comment-type (member all reviews shouts))
   (cl-check-type type (member all shows seasons episodes lists))
@@ -345,14 +345,14 @@
    :callback callback))
 
 
-(cl-defun tracktor-tv-user-get-lists (&key callback)
+(cl-defun tracktor-tv-user-lists-get (&key callback)
   "Returns all personal lists for a user"
   (tracktor--trakt-request "/users/me/lists"
    :auth? t
    :callback callback))
 
 
-(cl-defun tracktor-tv-user-create-list
+(cl-defun tracktor-tv-user-list-create
     (name &key description
           (privacy 'private)
           (display-numbers? nil)
@@ -377,7 +377,7 @@
                            :callback callback))
 
 
-(cl-defun tracktor-tv-user-get-list (list-id &key callback)
+(cl-defun tracktor-tv-user-list-get (list-id &key callback)
   "Returns a single personal list for the user"
   (tracktor--trakt-request
    (format "/users/me/lists/%d" list-id)
@@ -385,7 +385,7 @@
    :callback callback))
 
 
-(cl-defun tracktor-tv-user-get-list-trakt-id (list-name &key callback)
+(cl-defun tracktor-tv-user-list-trakt-id-get (list-name &key callback)
   "Returns the trakt id for the lists matching the name"
   (tracktor-tv-user-get-lists
    :callback (lambda (lists)
@@ -399,15 +399,7 @@
                  (funcall callback
                           (cl-remove-if (lambda (item) (null item)) result))))))
 
-
-(cl-defun tracktor-tv-user-get-list-items (list-id &key callback)
-  "Returns a single personal list items for the user"
-  (tracktor--trakt-request
-   (format "/users/me/lists/%d/items" list-id)
-   :auth? t
-   :callback callback))
-
-(cl-defun tracktor-tv-user-update-list
+(cl-defun tracktor-tv-user-list-update
     (list-id &key name description
           (privacy 'private)
           (display-numbers? nil)
@@ -433,12 +425,73 @@
    :callback callback))
 
 
-(cl-defun tracktor-tv-user-delete-list (list-id &key callback)
+(cl-defun tracktor-tv-user-list-delete (list-id &key callback)
   "Delete a personal list"
   (tracktor--trakt-request
    (format "/users/me/lists/%d" list-id)
    :method "DELETE"
    :auth? t
+   :callback callback))
+
+
+(cl-defun tracktor-tv-user-list-likes-get (list-id &key callback)
+  "Returns all users who liked a list"
+  (tracktor--trakt-request
+   (format "/users/me/lists/%d/likes" list-id)
+   :auth? t
+   :callback callback))
+
+(cl-defun tracktor-tv-user-list-like (list-id &key callback)
+  "Like a list"
+  (tracktor--trakt-request
+   (format "/users/me/lists/%d/like" list-id)
+   :auth? t
+   :method "POST"
+   :callback callback))
+
+
+(cl-defun tracktor-tv-user-list-unlike (list-id &key callback)
+  "Unlike a list"
+  (tracktor--trakt-request
+   (format "/users/me/lists/%d/like" list-id)
+   :auth? t
+   :method "Delete"
+   :callback callback))
+
+
+(cl-defun tracktor-tv-user-list-items-get
+    (list-id &key (type 'show) (sort-by 'rank) (sort-how 'asc) callback)
+  "Returns a single personal list items for the user"
+  (cl-check-type type (member show season episode person))
+  (cl-check-type sort-by (member rank added title released runtime popularity random percentage imdb_rating tmdb_rating rt_tomatometer rt_audience metascore votes imdb_votes tmdb_votes my_rating watched collected))
+  (cl-check-type sort-how (member asc desc))
+  (tracktor--trakt-request
+   (format "/users/me/lists/%d/items/%s/%s/%s" list-id type sort-by sort-how)
+   :auth? t
+   :callback callback))
+
+
+(cl-defun tracktor-tv-user-list-items-add (list-id &key shows seasons episodes callback)
+  "Add items to a user's list"
+  (tracktor--trakt-request
+   (format "/users/me/lists/%d/items" list-id)
+   :auth? t
+   :method "POST"
+   :data `((shows . (or shows []))
+           (seasons . (or seasons []))
+           (episodes . (or episodes [])))
+   :callback callback))
+
+
+(cl-defun tracktor-tv-user-list-items-remove (list-id &key shows seasons episodes callback)
+  "Remove items from a user's list"
+  (tracktor--trakt-request
+   (format "/users/me/lists/%d/items/remove" list-id)
+   :auth? t
+   :method "POST"
+   :data `((shows . (or shows []))
+           (seasons . (or seasons []))
+           (episodes . (or episodes [])))
    :callback callback))
 
 
