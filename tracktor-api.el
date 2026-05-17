@@ -407,5 +407,46 @@
    :auth? t
    :callback callback))
 
+(cl-defun tracktor-tv-user-update-list
+    (list-id &key name description
+          (privacy 'private)
+          (display-numbers? nil)
+          (allow-comments? t)
+          (sort-by 'rank)
+          (sort-how 'asc)
+          callback)
+  "Update a personal list"
+  (cl-check-type privacy (member private link friends public))
+  (cl-check-type sort-by (member rank added title released runtime popularity random percentage imdb_rating tmdb_rating rt_tomatometer rt_audience metascore votes imdb_votes tmdb_votes my_rating watched collected))
+  (cl-check-type sort-how (member asc desc))
+  (tracktor--trakt-request
+   (format "/users/me/lists/%d" list-id)
+   :method "PUT"
+   :auth? t
+   :data `((name . ,name)
+           (description . ,description)
+           (privacy . ,privacy)
+           (display_numbers . ,display-numbers?)
+           (allow_comments . ,allow-comments?)
+           (sort_by . ,sort-by)
+           (sort_how . ,sort-how))
+   :callback callback))
+
+
+(cl-defun tracktor-tv-user-delete-list (list-id &key callback)
+  "Delete a personal list"
+  (tracktor--trakt-request
+   (format "/users/me/lists/%d" list-id)
+   :method "DELETE"
+   :auth? t
+   :callback callback))
+
+
+(tracktor-tv-user-get-lists
+ :callback
+ (lambda (res)
+   (message "%s" res)))
+
+
 (provide 'tracktor-api)
 ;;; tracktor-api.el ends here
