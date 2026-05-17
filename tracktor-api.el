@@ -376,9 +376,36 @@
                                    (sort_how . ,sort-how))
                            :callback callback))
 
-(tracktor-tv-user-create-list "fuck my life"
- :callback (lambda (res)
-             (message "%s" res)))
+
+(cl-defun tracktor-tv-user-get-list (list-id &key callback)
+  "Returns a single personal list for the user"
+  (tracktor--trakt-request
+   (format "/users/me/lists/%d" list-id)
+   :auth? t
+   :callback callback))
+
+
+(cl-defun tracktor-tv-user-get-list-trakt-id (list-name &key callback)
+  "Returns the trakt id for the lists matching the name"
+  (tracktor-tv-user-get-lists
+   :callback (lambda (lists)
+               (let ((result
+                      (mapcar
+                       (lambda (list)
+                         (when (equal (alist-get 'name list) list-name)
+                           (let ((ids (alist-get 'ids list)))
+                             (alist-get 'trakt ids))))
+                       lists)))
+                 (funcall callback
+                          (cl-remove-if (lambda (item) (null item)) result))))))
+
+
+(cl-defun tracktor-tv-user-get-list-items (list-id &key callback)
+  "Returns a single personal list items for the user"
+  (tracktor--trakt-request
+   (format "/users/me/lists/%d/items" list-id)
+   :auth? t
+   :callback callback))
 
 (provide 'tracktor-api)
 ;;; tracktor-api.el ends here
