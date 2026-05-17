@@ -101,8 +101,9 @@
                       (refresh_token (alist-get 'refresh_token data))
                       (expires_in (alist-get 'expires_in data)))
                   (tracktor--trakt-write-tokens token refresh_token expires_in)
-                  (message "Tracktor: trakt refreshed token successfully"))
-                (funcall callback token)))
+                  (message "Tracktor: trakt refreshed token successfully")
+                  (when callback
+                    (funcall callback token)))))
     :error (cl-function
             (lambda (&key response &allow-other-keys)
               (message "Tracktor: trakt refreshing token failed: %s"
@@ -140,12 +141,15 @@
     (request full-url
       :type method
       :headers headers
-      :params params
+      :params (cl-remove-if
+               (lambda (pair) (null (cdr pair)))
+               params)
       :parser 'json-read
-      :data (json-encode data)
+      :data (when data (json-encode data))
       :success (cl-function
                 (lambda (&key data &allow-other-keys)
-                  (funcall callback data)))
+                  (when callback
+                    (funcall callback data))))
       :error (cl-function
               (lambda (&key response &allow-other-keys)
                 (message "Tracktor: request failed: (%d) %s"
