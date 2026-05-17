@@ -571,6 +571,28 @@
    :auth? t
    :callback callback))
 
+(cl-defun tracktor--tv-user-watched-history
+    (item-id &key start-at end-at (type 'shows) callback)
+  "Get the user's watched history for an item (ie. shows, seasons, episodes)
+you can specify a start-at and end-at period of this format '2016-07-01T23:59:59.000Z'"
+  (cl-check-type type (member shows seasons episodes))
+  (tracktor--trakt-request
+   (format "/users/me/history/%s/%s" type item-id)
+   :auth? t
+   :params `((start_at . ,start-at)
+             (end_at . ,end-at))
+   :callback callback))
+
+
+(tracktor--tv-show-details-get
+ "breaking bad"
+ :callback (lambda (res)
+             (let ((id (alist-get 'trakt (alist-get 'ids res))))
+               (tracktor--tv-user-watched-history id
+                                                  :callback
+                                                  (lambda (res)
+                                                    (message "%s" res))))))
+
 
 (provide 'tracktor-api)
 ;;; tracktor-api.el ends here
